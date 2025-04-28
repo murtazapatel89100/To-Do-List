@@ -1,14 +1,21 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Navbar from './Components/Navbar'
 import { v4 as uuidv4 } from 'uuid';
 import { MdDeleteForever } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
 
-function App() {
+function App() { 
 
   const [todo, setTodo] = useState("")
   const [todos, setTodos] = useState([])
   const [showfinished, setShowfinished] = useState(true)
+  const buttonref = useRef(null)
+
+  const Handlekeypress = (event) =>{
+    if(event.key === "Enter"){
+      buttonref.current.click()
+    }
+  }
 
   useEffect(() => {
     let todostring = localStorage.getItem('todos')
@@ -32,10 +39,16 @@ function App() {
   }
 
   const HandleDelete = (e, id) => {
-    let newtodos = todos.filter(item => {return item.id!==id})
-    setTodos(newtodos)
-    savetoLS()
-  }
+    let newtodos = todos.filter(item => item.id !== id);
+    setTodos(newtodos);
+  
+    // If no todos left, clear localStorage
+    if (newtodos.length === 0) {
+      localStorage.removeItem('todos');
+    } else {
+      savetoLS();
+    }
+  };
 
   const HandleAdd = () => {
     setTodos([...todos, { id :uuidv4() , todo, iscompleted: false }])
@@ -74,8 +87,8 @@ function App() {
             Add a Todo
             </h2>
 
-            <input type="text" onChange={HandleChnage} value={todo} className='w-80' />
-            <button onClick={HandleAdd} disabled={todo.length<=3} className='bg-violet-800 hover:bg-violet-950 px-6 py-1 text-white rounded-md mx-2 disabled:bg-slate-700 '>Add</button>
+            <input type="text" onKeyPress={Handlekeypress} onChange={HandleChnage} value={todo} className='w-80' />
+            <button ref={buttonref} onClick={HandleAdd} disabled={todo.length<=3} className='bg-violet-800 hover:bg-violet-950 px-6 py-1 text-white rounded-md mx-2 disabled:bg-slate-700 '>Add</button>
 
         </div>
 
