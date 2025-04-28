@@ -42,7 +42,6 @@ function App() {
     let newtodos = todos.filter(item => item.id !== id);
     setTodos(newtodos);
   
-    // If no todos left, clear localStorage
     if (newtodos.length === 0) {
       localStorage.removeItem('todos');
     } else {
